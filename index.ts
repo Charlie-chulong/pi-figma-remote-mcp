@@ -107,7 +107,7 @@ async function registerOAuthClient(): Promise<{
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      client_name: "pi-figma-remote-mcp",
+      client_name: "Claude Code",
       redirect_uris: [OAUTH_REDIRECT_URI],
       token_endpoint_auth_method: "none",
       grant_types: ["authorization_code", "refresh_token"],

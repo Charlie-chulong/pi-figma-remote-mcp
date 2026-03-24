@@ -37,6 +37,8 @@ Or place extension in your `/extensions` folder.
 
 Token is saved to `~/.pi/figma-remote-mcp-token.json` and auto-refreshes.
 
+> **Note:** Figma's dynamic client registration endpoint is whitelisted by `client_name`. This extension registers as `"Claude Code"` to pass registration. Custom names get 403 Forbidden.
+
 ## Commands
 
 | Command | Description |
