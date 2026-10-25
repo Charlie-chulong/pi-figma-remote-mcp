@@ -45,3 +45,34 @@ Token is saved to `~/.pi/figma-remote-mcp-token.json` and auto-refreshes.
 |---|---|
 | `/figma-remote` | Show connection status and available tools |
 | `/figma-remote-auth` | Run OAuth authentication |
+
+[Showing lines 1-47 of 59. Use :48 to continue]
+
+## OMP compatibility
+
+The schema builder passes descriptions through TypeBox constructor options rather
+than spreading schema values. This preserves callable schemas in OMP 18.12.3's
+TypeBox compatibility layer and avoids `asRuntime(schema).or is not a function`
+when registering tools with optional described parameters. It remains compatible
+with the existing TypeBox constructor API.
+
+This change does not modify OAuth registration, client identifiers, callback
+URLs, token handling, MCP requests, or canvas execution. Existing running
+sessions must reload the extension to pick up the changed module; logging in
+again is not required solely for this fix.
+
+### Native OMP regression check
+
+`test/omp-schema.regression.ts` calls the actual exported `buildSchema` and checks
+required/optional fields, invalid JSON value types, enum rejection, and parameter
+descriptions. Importing it does not start OAuth or connect to Figma.
+
+Load that file as an explicit `--trusted-extension` in an isolated native OMP
+RPC process, then send a local `get_state` request and close stdin. The trusted
+extension option makes assertion failures fail startup rather than silently
+dropping the test extension. No model prompt is needed.
+
+Validation on OMP 18.12.3: 16 regression assertions passed; a separate live,
+read-only smoke registered all 42 currently advertised tools and successfully
+called `whoami` and `get_metadata` using an existing authorization. Canvas writes
+and the remaining remote tools were not exercised.
